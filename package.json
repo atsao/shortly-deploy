@@ -5,7 +5,7 @@
   "main": "server.js",
   "repository": "",
   "license": "Proprietary",
-  "private": true,
+  "private": false,
   "dependencies": {
     "knex": "~0.5.7",
     "bookshelf": "~0.6.4",
