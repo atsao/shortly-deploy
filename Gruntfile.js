@@ -6,16 +6,18 @@ module.exports = function(grunt) {
       options: {
         separator: ';'
       },
-      dist: {
-        src: [],
-        dest: 'public/dist/built.js'
+      app_and_lib: {
+        files: {
+          'public/dist/built.js': 'public/client/**/*.js',
+        }
       }
     },
 
     mochaTest: {
       test: {
         options: {
-          reporter: 'spec'
+          reporter: 'spec',
+          bail: true
         },
         src: ['test/**/*.js']
       }
@@ -28,16 +30,36 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      build: {
+        files: [{
+          expand: true,
+          cwd: 'public/dist/',
+          src: '*.js',
+          dest: 'public/dist/',
+          ext: '.min.js'
+        }]
+      },
+      lib: {
+        files: [{
+          expand: true,
+          cwd: 'public/lib/',
+          src: '*.js',
+          dest: 'public/dist/lib/',
+          ext: '.min.js'
+          }]
+      }
     },
 
     jshint: {
       files: [
         'app/**/*.js',
-        'public/client/*.js',
-        'lib/*.js'
+        'public/client/**/*.js',
+        'lib/*.js',
+        'public/dist/built.min.js',
+        'public/dist/lib.min.js'
       ],
       options: {
-        force: 'true',
+        force: false,
         jshintrc: '.jshintrc',
         ignores: [
           'public/lib/**/*.js',
@@ -47,9 +69,15 @@ module.exports = function(grunt) {
     },
 
     cssmin: {
-      files: [
-        'public/*.css'
-      ]
+      options: {
+        shorthandCompacting: false,
+        roundingPrecision: -1
+      },
+      target: {
+        files: {
+          'public/style.min.css': ['public/*.css']
+        }
+      }
     },
 
     watch: {
@@ -106,10 +134,11 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'concat',
     'uglify',
     'jshint',
     'cssmin',
-    'concat'
+    'nodemon'
   ]);
 
   grunt.registerTask('upload', function(n) {
